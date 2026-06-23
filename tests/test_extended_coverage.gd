@@ -6,6 +6,7 @@ extends AutoworkTest
 class TestExitGoal extends BlaziumGoapGoal:
 	var entered = false
 	var exited = false
+	var achieved = false
 	var prepared = false
 	var performed_count = 0
 	func _init():
@@ -16,6 +17,7 @@ class TestExitGoal extends BlaziumGoapGoal:
 	func _prepare(): prepared = true
 	func _perform(_delta: float): 
 		performed_count += 1
+	func _on_goal_achieved(): achieved = true
 
 class TestActionComplete extends BlaziumGoapAction:
 	var entered = false
@@ -95,8 +97,8 @@ func test_action_and_goal_gdvirtual_execution():
 	agent.notification(Node.NOTIFICATION_PROCESS)
 	assert_true(g.performed_count >= 1, "Goal Perform explicitly executed natively.")
 	
-	# Since plan finishes instantly without needs, goal exits safely.
-	assert_true(g.exited, "Goal completed and exited safely natively.")
+	# Since plan finishes after the action applies effects, goal achievement is signaled.
+	assert_true(g.achieved, "Goal completed and achieved safely natively.")
 
 func test_debugger_triggers_mechanically():
 	# Validate debug bindings
